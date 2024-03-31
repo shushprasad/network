@@ -5,7 +5,7 @@ import com.shushprasad.network.api.model.MovieResponse
 import retrofit2.Call
 import retrofit2.Callback
 
-object NetworkSDK {
+object MovieRepository {
     private const val API_KEY = "909594533c98883408adef5d56143539"
     private var movieId = 1
     private val networkService: MovieApiService by lazy {
