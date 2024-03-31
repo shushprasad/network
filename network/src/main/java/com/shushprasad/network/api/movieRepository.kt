@@ -2,8 +2,9 @@ package com.shushprasad.network.api
 
 import com.shushprasad.network.api.model.MovieDetail
 import com.shushprasad.network.api.model.MovieResponse
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object MovieRepository {
     private const val API_KEY = "909594533c98883408adef5d56143539"
@@ -12,17 +13,36 @@ object MovieRepository {
         RetrofitClient.getClient().create(MovieApiService::class.java)
     }
 
-    suspend fun getLatestMovie(callback: Callback<MovieResponse>) {
-        val call: Call<MovieResponse> = networkService.getLatestMovies(API_KEY)
-        call.enqueue(callback)
-    }
-    suspend fun getPopularMovie(callback: Callback<MovieResponse>) {
-        val call: Call<MovieResponse> = networkService.getPopularMovies(API_KEY)
-        call.enqueue(callback)
-    }
-    suspend fun getMovieDetails(callback: Callback<MovieDetail>) {
-        val call: Call<MovieDetail> = networkService.getMovieDetails(movieId,API_KEY)
-        call.enqueue(callback)
+    fun getLatestMovie(callback: MovieCallback<MovieResponse>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = networkService.getLatestMovies(API_KEY)
+                callback.onSuccess(response)
+            } catch (e: Throwable) {
+                callback.onFailure(e)
+            }
+        }
     }
 
+    fun getPopularMovie(callback: MovieCallback<MovieResponse>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = networkService.getPopularMovies(API_KEY)
+                callback.onSuccess(response)
+            } catch (e: Throwable) {
+                callback.onFailure(e)
+            }
+        }
+    }
+
+    fun getMovieDetails(callback: MovieCallback<MovieDetail>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = networkService.getMovieDetails(movieId, API_KEY)
+                callback.onSuccess(response)
+            } catch (e: Throwable) {
+                callback.onFailure(e)
+            }
+        }
+    }
 }
